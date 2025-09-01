@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub User Finder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #38bdf8;
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: #0f172a;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .card {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 12px;
+      background: #1e293b;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      text-align: center;
+      width: 300px;
+    }
+    .card img {
+      width: 100px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+    }
+    .card a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>GitHub User Finder</h1>
+  <div>
+    <input type="text" id="username" placeholder="Enter GitHub username">
+    <button onclick="getUser()">Search</button>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    async function getUser() {
+      const username = document.getElementById("username").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (!username) {
+        resultDiv.innerHTML = "<p>Please enter a username!</p>";
+        return;
+      }
+
+      try {
+        resultDiv.innerHTML = "<p>Loading...</p>";
+        
+        // async await fetch
+        const response = await fetch(`https://api.github.com/users/${username}`);
+        if (!response.ok) throw new Error("User not found!");
+        
+        const data = await response.json();
+
+        resultDiv.innerHTML = `
+          <div class="card">
+            <img src="${data.avatar_url}" alt="User Avatar">
+            <h2>${data.name || "No Name"}</h2>
+            <p>Followers: ${data.followers}</p>
+            <a href="${data.html_url}" target="_blank">Visit Profile</a>
+          </div>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `<p style="color:red;">${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
+
